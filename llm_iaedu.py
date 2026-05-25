@@ -2,6 +2,7 @@ import llm
 from llm import hookimpl, NeedsKeyException
 import os
 import json
+import uuid
 import httpx
 
 @hookimpl
@@ -27,42 +28,34 @@ class IaeduModel(llm.Model):
         # Prepare headers
         headers = {
             "x-api-key": key,
-            "Content-Type": "application/json"
         }
         
         # Get the prompt text (includes fragments and prompt string)
         text = prompt.prompt
         
-        # Prepare request body in OpenAI format with a single user message
-        data = {
-            "messages": [
-                {
-                    "role": "user",
-                    "content": text
-                }
-            ],
-            "model": self.model_id,  # Adapter ignores this but we send it anyway
-        }
+        # Generate a unique thread ID for this request
+        thread_id = str(uuid.uuid4())
         
-        # Add non-None options from prompt.options
-        if prompt.options:
-            options_dict = prompt.options.dict()
-            # Filter out None values
-            options_dict = {k: v for k, v in options_dict.items() if v is not None}
-            data.update(options_dict)
+        # Prepare form data (matching what the adapter expects to send to iaedu.pt)
+        # Note: The adapter adds its own channel_id from its environment, so we don't send channel_id here.
+        form_data = {
+            'thread_id': (None, thread_id),
+            'user_info': (None, '{}'),
+            'message': (None, text)
+        }
         
         # Make request to adapter (synchronous)
         with httpx.Client(timeout=60.0) as client:
-            response = client.post(
+            response_obj = client.post(
                 f"{adapter_url}/v1/chat/completions",
                 headers=headers,
-                json=data,
+                files=form_data,  # This will encode as multipart/form-data
                 timeout=60.0
             )
-            response.raise_for_status()
+            response_obj.raise_for_status()
             
             # Process the response line by line (SSE format)
-            for line in response.iter_lines():
+            for line in response_obj.iter_lines():
                 if line:
                     line = line.decode('utf-8') if isinstance(line, bytes) else line
                     if line.startswith("data: "):

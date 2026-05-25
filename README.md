@@ -34,7 +34,12 @@ pip install -e .
    ```bash
    # In another terminal
    npm install  # if you haven't already
-   npm start    # or however you run the adapter
+   # Create a .env file in the iaedu-adapter directory with:
+   echo "IAEDU_API_KEY=your-actual-api-key-here" > .env
+   echo "IAEDU_CHANNEL_ID=your-channel-id-here" >> .env  # This is the channel ID for your agent in iaedu.pt
+   echo "IAEDU_ENDPOINT=https://api.iaedu.pt/agent-chat/api/v1/agent/your-agent-id/stream" >> .env  # Optional, defaults to the hardcoded value in the adapter
+   # Then start the adapter:
+   npm start
    # The adapter should be accessible at http://localhost:4000
    ```
 
@@ -68,8 +73,8 @@ IAEDU_ENDPOINT=http://my-server:8000 llm -m iaedu "Hello"
 This plugin acts as a bridge between LLM and the iaedu-adapter:
 1. LLM calls the plugin with a prompt
 2. The plugin retrieves your IAEDU API key using LLM's key management system
-3. The plugin forwards the request to your iaedu-adapter instance
-4. The adapter communicates with the iaedu.pt API
+3. The plugin forwards the request to your iaedu-adapter instance (as multipart/form-data)
+4. The adapter communicates with the iaedu.pt API using its own channel ID and agent ID (configured in its environment)
 5. The plugin streams the response back to LLM
 
 ## Requirements
@@ -77,3 +82,4 @@ This plugin acts as a bridge between LLM and the iaedu-adapter:
 - LLM installed
 - iaedu-adapter running and accessible
 - Valid IAEDU API key
+- Valid IAEDU channel ID and agent ID configured in the iaedu-adapter's environment

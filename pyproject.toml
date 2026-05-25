@@ -1,6 +1,6 @@
 [project]
 name = "llm-iaedu"
-version = "0.1"
+version = "0.2"
 description = "LLM plugin for iaedu-adapter"
 readme = "README.md"
 authors = [{name = "Rodolfo Matos"}]
