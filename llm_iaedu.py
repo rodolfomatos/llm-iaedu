@@ -78,7 +78,11 @@ class IaeduModel(llm.Model):
         # Stable thread_id per conversation for chat history
         thread_id = str(getattr(conversation, "id", uuid.uuid4()))
 
+        # Build message from system prompt + user prompt
         text = prompt.prompt
+        system = getattr(prompt, "system", None) or ""
+        if system:
+            text = f"{system}\n\n{text}"
 
         form_data = {
             "thread_id": (None, thread_id),
