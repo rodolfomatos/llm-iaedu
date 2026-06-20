@@ -1,85 +1,95 @@
 # llm-iaedu
 
-A plugin for [LLM](https://llm.datasette.io/) that enables using the [iaedu-adapter](https://github.com/rodolfomatos/iaedu-adapter) as a model.
+Plugin for [LLM](https://llm.datasette.io/) that enables using the
+[iaedu.pt](https://iaedu.pt) API as a model — no adapter, no Docker.
 
-## Installation
+## Quick Start
 
 ```bash
-# Install LLM if you don't have it
-pip install llm
-
-# Install this plugin
+# Install
 pip install llm-iaedu
-```
 
-Or for development:
+# Set API key
+llm keys set iaedu
 
-```bash
-git clone https://github.com/yourname/llm-iaedu.git
-cd llm-iaedu
-pip install -e .
+# Set as default model (optional)
+llm models default iaedu
+
+# Ask anything
+llm "What is the capital of Portugal?"
 ```
 
 ## Setup
 
-1. Get your IAEDU API key from [iaedu.pt](https://iaedu.pt)
+### 1. API Key
 
-2. Set the API key using LLM's key management:
-   ```bash
-   llm keys set iaedu
-   # Paste your API key when prompted
-   ```
+```bash
+llm keys set iaedu
+# Paste your API key when prompted
+```
 
-3. Ensure the [iaedu-adapter](https://github.com/rodolfomatos/iaedu-adapter) is running:
-   ```bash
-   # In another terminal
-   npm install  # if you haven't already
-   # Create a .env file in the iaedu-adapter directory with:
-   echo "IAEDU_API_KEY=your-actual-api-key-here" > .env
-   echo "IAEDU_CHANNEL_ID=your-channel-id-here" >> .env  # This is the channel ID for your agent in iaedu.pt
-   echo "IAEDU_ENDPOINT=https://api.iaedu.pt/agent-chat/api/v1/agent/your-agent-id/stream" >> .env  # Optional, defaults to the hardcoded value in the adapter
-   # Then start the adapter:
-   npm start
-   # The adapter should be accessible at http://localhost:4000
-   ```
+Alternatively, set `IAEDU_API_KEY` in your config file.
+
+### 2. Channel + Agent
+
+Create `~/.config/iaedu/env`:
+
+```
+IAEDU_CHANNEL_ID=your-channel-id
+IAEDU_AGENT_ID=your-agent-id
+```
+
+Or place a `.env` in any project directory for local config.
+
+### Config Precedence
+
+1. Current shell (`export IAEDU_*`)
+2. `./.env` (local)
+3. `~/.config/iaedu/env` (global)
+4. `~/.iaedu.env` (legacy)
 
 ## Usage
 
-Once installed and configured, you can use the iaedu model like any other LLM model:
-
 ```bash
+# One-off
 llm -m iaedu "What is the capital of Portugal?"
-```
 
-You can also use it in chat mode:
+# Default model (just skip -m)
+llm models default iaedu
+llm "What is the capital of Portugal?"
 
-```bash
+# Interactive chat
 llm chat -m iaedu
+
+# Pipe input
+cat file.txt | llm -m iaedu
 ```
 
-## Configuration
+## Development
 
-The plugin uses the following environment variable:
-
-- `IAEDU_ENDPOINT`: URL of the iaedu-adapter (default: `http://localhost:4000`)
-
-Example:
 ```bash
-IAEDU_ENDPOINT=http://my-server:8000 llm -m iaedu "Hello"
+git clone https://github.com/rodolfomatos/llm-iaedu.git
+cd llm-iaedu
+make setup
+make check
 ```
 
 ## How it works
 
-This plugin acts as a bridge between LLM and the iaedu-adapter:
-1. LLM calls the plugin with a prompt
-2. The plugin retrieves your IAEDU API key using LLM's key management system
-3. The plugin forwards the request to your iaedu-adapter instance (as multipart/form-data)
-4. The adapter communicates with the iaedu.pt API using its own channel ID and agent ID (configured in its environment)
-5. The plugin streams the response back to LLM
+The plugin calls the iaedu.pt API directly — no adapter server required.
+It loads config from environment variables or `.env` files,
+sends prompts as multipart form data, and streams token responses.
 
 ## Requirements
 
-- LLM installed
-- iaedu-adapter running and accessible
-- Valid IAEDU API key
-- Valid IAEDU channel ID and agent ID configured in the iaedu-adapter's environment
+- Python 3.8+
+- `llm` CLI
+- iaedu.pt account with API key, channel ID, and agent ID
+
+## Project
+
+- [VISION](docs/VISION.md) — problem, solution, value proposition
+- [REQUIREMENTS](docs/REQUIREMENTS.md) — functional and non-functional
+- [ROADMAP](docs/ROADMAP.md) — backlog and progress
+- [CHANGELOG](CHANGELOG.md) — version history
+- [CLAUDE.md](CLAUDE.md) — operational contract for AI agents
