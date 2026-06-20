@@ -1,5 +1,5 @@
 .PHONY: setup install dev-install test build clean help start \
-        check lint format doctor metrics pre-commit
+        check lint format doctor metrics pre-commit configure
 
 # Variables
 PIP ?= pip
@@ -12,6 +12,7 @@ help:
 	@echo ""
 	@echo "Setup:"
 	@echo "  make setup        Install dependencies (dev mode)"
+	@echo "  make configure    Interactive setup (paste from iaedu.pt)"
 	@echo "  make install      Install package in production mode"
 	@echo "  make dev-install  Install package in development mode"
 	@echo ""
@@ -37,6 +38,14 @@ setup:
 	@echo "Setting up development environment..."
 	$(PIP) install -e .
 	$(PIP) install ruff
+
+configure:
+	@echo ""
+	@echo "This will prompt for your iaedu.pt credentials and create"
+	@echo "~/.config/iaedu/env so you can use 'llm -m iaedu' from any directory."
+	@echo ""
+	@read -p "Press Enter to continue or Ctrl-C to cancel..." dummy
+	bash scripts/setup.sh
 
 install:
 	@echo "Installing llm-iaedu..."

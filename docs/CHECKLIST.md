@@ -1,5 +1,9 @@
 # Checklist
 
+## Pre-Setup (new users)
+- [ ] `make configure` — interactive paste from iaedu.pt
+- [ ] `make check` — verify plugin and config
+
 ## Pre-Commit
 
 - [ ] `make lint` — ruff reports no errors

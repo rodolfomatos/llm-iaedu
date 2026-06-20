@@ -21,22 +21,24 @@ llm "What is the capital of Portugal?"
 
 ## Setup
 
-### 1. API Key
+### Quick (interactive)
 
 ```bash
-llm keys set iaedu
-# Paste your API key when prompted
+make configure
 ```
 
-Alternatively, set `IAEDU_API_KEY` in your config file.
+Paste the three values from iaedu.pt (Endpoint URL, API Key, Channel ID)
+when prompted. The script creates `~/.config/iaedu/env` with everything
+needed — works from any directory.
 
-### 2. Channel + Agent
+### Manual
 
 Create `~/.config/iaedu/env`:
 
 ```
+IAEDU_ENDPOINT=https://api.iaedu.pt/agent-chat/api/v1/agent/your-agent-id/stream
 IAEDU_CHANNEL_ID=your-channel-id
-IAEDU_AGENT_ID=your-agent-id
+IAEDU_API_KEY=your-api-key
 ```
 
 Or place a `.env` in any project directory for local config.

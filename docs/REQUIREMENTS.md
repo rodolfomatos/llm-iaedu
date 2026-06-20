@@ -10,7 +10,7 @@
 | F4 | Plugin supports `llm chat -m iaedu` interactive mode | Must |
 | F5 | API key can be set via `llm keys set iaedu` or `IAEDU_API_KEY` env var | Must |
 | F6 | Channel ID can be set via `IAEDU_CHANNEL_ID` env var | Must |
-| F7 | Agent endpoint can be set via `IAEDU_AGENT_ID` or `IAEDU_ENDPOINT` | Must |
+| F7 | Agent endpoint can be set via `IAEDU_ENDPOINT` or `IAEDU_AGENT_ID` | Must |
 | F8 | Plugin auto-loads config from `./.env` and `~/.config/iaedu/env` | Must |
 | F9 | Clear error messages when required config is missing | Must |
 

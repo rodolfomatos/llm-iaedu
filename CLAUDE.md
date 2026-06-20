@@ -33,8 +33,18 @@ ruff check llm_iaedu.py
 python3 -m build
 ```
 
+## Config
+`make configure` creates `~/.config/iaedu/env` with three values from iaedu.pt:
+`IAEDU_ENDPOINT`, `IAEDU_CHANNEL_ID`, `IAEDU_API_KEY`.
+
 ## Config Precedence
 1. `os.environ` (explicit export or `source .env`)
 2. `./.env` (local)
 3. `~/.config/iaedu/env` (global)
 4. `~/.iaedu.env` (legacy)
+
+## Setup Commands
+```bash
+make configure   # interactive — paste from iaedu.pt
+make check       # verify installation and config
+```

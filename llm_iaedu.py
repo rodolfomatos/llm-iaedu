@@ -66,10 +66,14 @@ class IaeduModel(llm.Model):
                 "Set only one of IAEDU_ENDPOINT or IAEDU_AGENT_ID, not both."
             )
 
-        if not endpoint:
-            endpoint = (
-                f"https://api.iaedu.pt/agent-chat/api/v1/agent/" f"{agent_id}/stream"
-            )
+        if endpoint:
+            scheme, _, rest = endpoint.partition("://")
+            if rest:
+                while "//" in rest:
+                    rest = rest.replace("//", "/")
+                endpoint = f"{scheme}://{rest}"
+        else:
+            endpoint = f"https://api.iaedu.pt/agent-chat/api/v1/agent/{agent_id}/stream"
 
         # Stable thread_id per conversation for chat history
         thread_id = str(getattr(conversation, "id", uuid.uuid4()))
