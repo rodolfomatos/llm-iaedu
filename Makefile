@@ -18,7 +18,7 @@ help:
 	@echo "  make dev-install    Install package in development mode"
 	@echo ""
 	@echo "Ubuntu/Debian (PEP 668):"
-	@echo "  make ubuntu-setup   Install using --user (bypasses externally-managed)"
+	@echo "  make ubuntu-setup   Show Ubuntu/Debian installation instructions"
 	@echo "  make pipx-setup     Install into existing pipx llm venv"
 	@echo ""
 	@echo "Usage:"
@@ -46,9 +46,18 @@ setup:
 
 # For Ubuntu/Debian where PEP 668 blocks system pip install
 ubuntu-setup:
-	@echo "Installing with --user (PEP 668 workaround)..."
-	pip install --user -e .
-	pip install --user ruff
+	@echo "Ubuntu/Debian PEP 668 detected. Choose one of:"
+	@echo ""
+	@echo "Option 1: If llm is installed via pipx (recommended):"
+	@echo "  pipx install llm    # if not already done"
+	@echo "  pipx inject llm .   # install this plugin"
+	@echo ""
+	@echo "Option 2: Create a virtual environment:"
+	@echo "  python3 -m venv venv"
+	@echo "  source venv/bin/activate"
+	@echo "  pip install -e ."
+	@echo ""
+	@echo "After installation, run: make check"
 
 # For when llm is installed via pipx
 pipx-setup:

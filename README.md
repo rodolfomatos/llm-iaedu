@@ -20,18 +20,25 @@ llm -m iaedu "What is the capital of Portugal?"
 ### Ubuntu / Debian (PEP 668)
 Ubuntu 23.04+ blocks system-wide `pip install`. Use one of:
 
-**Option A — pip install --user** (simpler):
-```bash
-pip install --user llm-iaedu
-llm keys set iaedu
-llm -m iaedu "What is the capital of Portugal?"
-```
-
-**Option B — pipx** (if you already `pipx install llm`):
+**Option 1: pipx** (if you already `pipx install llm`):
 ```bash
 pipx inject llm llm-iaedu
 llm keys set iaedu
 llm -m iaedu "What is the capital of Portugal?"
+```
+
+**Option 2: Virtual environment:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install llm-iaedu
+llm keys set iaedu
+llm -m iaedu "What is the capital of Portugal?"
+```
+
+**Option 3: Makefile helper:**
+```bash
+make ubuntu-setup  # Shows detailed instructions
 ```
 
 ## Setup
