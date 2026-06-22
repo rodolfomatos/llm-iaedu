@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import uuid
 
 import httpx
@@ -168,3 +169,57 @@ class IaeduModel(llm.Model):
             raise RuntimeError(f"iaedu.pt API returned HTTP {status}") from e
         except httpx.StreamError as e:
             raise RuntimeError(f"Connection lost while streaming response: {e}") from e
+
+
+def configure():
+    config_dir = os.path.expanduser("~/.config/iaedu")
+    config_file = os.path.join(config_dir, "env")
+
+    print("============================================")
+    print("  llm-iaedu — Interactive Setup")
+    print("============================================")
+    print()
+    print("Go to iaedu.pt, open your agent, and copy the")
+    print("three values it shows (Endpoint, API Key,")
+    print("Channel ID). Paste them below.")
+    print()
+
+    endpoint = input("IAEDU Endpoint URL (paste from iaedu.pt): ").strip()
+    while not endpoint:
+        print("  Endpoint cannot be empty.")
+        endpoint = input("IAEDU Endpoint URL: ").strip()
+
+    api_key = input("IAEDU API Key (paste from iaedu.pt): ").strip()
+    while not api_key:
+        print("  API Key cannot be empty.")
+        api_key = input("IAEDU API Key: ").strip()
+
+    channel_id = input("IAEDU Channel ID (paste from iaedu.pt): ").strip()
+    while not channel_id:
+        print("  Channel ID cannot be empty.")
+        channel_id = input("IAEDU Channel ID: ").strip()
+
+    os.makedirs(config_dir, exist_ok=True)
+    with open(config_file, "w") as f:
+        f.write("# iaedu global config — used by llm-iaedu from any directory\n")
+        f.write(f"IAEDU_ENDPOINT={endpoint}\n")
+        f.write(f"IAEDU_CHANNEL_ID={channel_id}\n")
+        f.write(f"IAEDU_API_KEY={api_key}\n")
+
+    os.chmod(config_file, 0o600)
+    print()
+    print(f"  [OK] Config written to {config_file}")
+    print()
+    print("  You can now use: llm -m iaedu \"Your question\"")
+
+
+def main():
+    if len(sys.argv) > 1 and sys.argv[1] == "configure":
+        configure()
+    else:
+        print("Usage: llm-iaedu configure")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

@@ -18,5 +18,8 @@ Repository = "https://github.com/rodolfomatos/llm-iaedu"
 "Bug Tracker" = "https://github.com/rodolfomatos/llm-iaedu/issues"
 Changelog = "https://github.com/rodolfomatos/llm-iaedu/blob/main/CHANGELOG.md"
 
+[project.scripts]
+llm-iaedu = "llm_iaedu:main"
+
 [project.entry-points.llm]
 iaedu = "llm_iaedu"

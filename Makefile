@@ -70,6 +70,9 @@ configure:
 	@echo "This will prompt for your iaedu.pt credentials and create"
 	@echo "~/.config/iaedu/env so you can use 'llm -m iaedu' from any directory."
 	@echo ""
+	@echo "Note: if you installed via pip (no repo), run:"
+	@echo "  llm-iaedu configure"
+	@echo ""
 	@read -p "Press Enter to continue or Ctrl-C to cancel..." dummy
 	bash scripts/setup.sh
 

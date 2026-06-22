@@ -10,8 +10,8 @@ Plugin for [LLM](https://llm.datasette.io/) that enables using the
 # Install
 pip install llm-iaedu
 
-# Set API key
-llm keys set iaedu
+# Configure credentials (Endpoint, API Key, Channel ID)
+llm-iaedu configure
 
 # Ask anything
 llm -m iaedu "What is the capital of Portugal?"
@@ -23,7 +23,13 @@ Ubuntu 23.04+ blocks system-wide `pip install`. Use one of:
 **Option 1: pipx** (if you already `pipx install llm`):
 ```bash
 pipx inject llm llm-iaedu
-llm keys set iaedu
+# Configure credentials manually:
+mkdir -p ~/.config/iaedu
+cat > ~/.config/iaedu/env << EOF
+IAEDU_ENDPOINT=https://api.iaedu.pt/agent-chat/api/v1/agent/YOUR-AGENT-ID/stream
+IAEDU_CHANNEL_ID=your-channel-id
+IAEDU_API_KEY=your-api-key
+EOF
 llm -m iaedu "What is the capital of Portugal?"
 ```
 
@@ -32,13 +38,17 @@ llm -m iaedu "What is the capital of Portugal?"
 python3 -m venv venv
 source venv/bin/activate
 pip install llm-iaedu
-llm keys set iaedu
+llm-iaedu configure
 llm -m iaedu "What is the capital of Portugal?"
 ```
 
-**Option 3: Makefile helper:**
+**Option 3: From git clone:**
 ```bash
-make ubuntu-setup  # Shows detailed instructions
+git clone https://github.com/rodolfomatos/llm-iaedu.git
+cd llm-iaedu
+make ubuntu-setup   # shows instructions
+make configure      # interactive credential setup
+make check          # verify everything works
 ```
 
 ## Setup
@@ -46,7 +56,11 @@ make ubuntu-setup  # Shows detailed instructions
 ### Quick (interactive)
 
 ```bash
+# From git clone (has Makefile):
 make configure
+
+# From pip install (no repo):
+llm-iaedu configure
 ```
 
 Paste the three values from iaedu.pt (Endpoint URL, API Key, Channel ID)
@@ -102,11 +116,11 @@ make ubuntu-setup
 # ... or pipx:
 make pipx-setup
 
+make configure
 make check
 ```
 
 ## How it works
-
 The plugin calls the iaedu.pt API directly — no adapter server required.
 It loads config from environment variables or `.env` files,
 sends prompts as multipart form data, and streams token responses.
