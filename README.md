@@ -34,6 +34,10 @@ llm iaedu-configure
 
 # That's it — no need for `llm keys set iaedu`
 llm -m iaedu "What is the capital of Portugal?"
+
+# Optional — make iaedu your default model:
+llm models default iaedu
+llm "What is the capital of Portugal?"
 ```
 
 To upgrade after install:
