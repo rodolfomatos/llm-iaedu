@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4 (2026-06-22)
+
+### Added
+- `llm iaedu-configure` subcommand via `register_commands` hook — works after pipx inject (no separate pipx install needed)
+- `OSError` catch in error handling for broader connection error coverage
+
+### Changed
+- `llm-iaedu start` now prints usage instead of "unknown command"
+
 ## 0.3 (2026-06-22)
 
 ### Added

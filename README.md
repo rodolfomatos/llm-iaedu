@@ -24,10 +24,10 @@ Ubuntu 23.04+ blocks system-wide `pip install`. Use one of:
 ```bash
 pipx inject llm llm-iaedu
 
-# Configure credentials:
-llm-iaedu configure          # if on PATH (pip install)
+# Configure credentials (works after pipx inject, no extra install):
+llm iaedu-configure
 # OR from the git repo:
-make configure               # uses scripts/setup.sh
+make configure
 # OR manually:
 mkdir -p ~/.config/iaedu
 cat > ~/.config/iaedu/env << EOF

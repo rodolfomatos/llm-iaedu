@@ -38,6 +38,14 @@ def register_models(register):
     register(IaeduModel())
 
 
+@hookimpl
+def register_commands(cli):
+    @cli.command(name="iaedu-configure")
+    def iaedu_configure():
+        """Configure iaedu.pt credentials interactively."""
+        configure()
+
+
 class IaeduModel(llm.Model):
     model_id = "iaedu"
 
@@ -156,6 +164,10 @@ class IaeduModel(llm.Model):
             raise RuntimeError(
                 f"Cannot connect to {endpoint}. Check your network and IAEDU_AGENT_ID."
             ) from e
+        except OSError as e:
+            raise RuntimeError(
+                f"Network error connecting to {endpoint}: {e}"
+            ) from e
         except httpx.HTTPStatusError as e:
             status = e.response.status_code
             if status == 401:
@@ -216,6 +228,9 @@ def configure():
 def main():
     if len(sys.argv) > 1 and sys.argv[1] == "configure":
         configure()
+    elif len(sys.argv) > 1 and sys.argv[1] == "start":
+        print("Run: llm -m iaedu \"Your question\"")
+        print("Or:  llm iaedu-configure")
     else:
         print("Usage: llm-iaedu configure")
         sys.exit(1)
