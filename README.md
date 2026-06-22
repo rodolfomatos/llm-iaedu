@@ -23,13 +23,19 @@ Ubuntu 23.04+ blocks system-wide `pip install`. Use one of:
 **Option 1: pipx** (if you already `pipx install llm`):
 ```bash
 pipx inject llm llm-iaedu
-# Configure credentials manually:
+
+# Configure credentials:
+llm-iaedu configure          # if on PATH (pip install)
+# OR from the git repo:
+make configure               # uses scripts/setup.sh
+# OR manually:
 mkdir -p ~/.config/iaedu
 cat > ~/.config/iaedu/env << EOF
 IAEDU_ENDPOINT=https://api.iaedu.pt/agent-chat/api/v1/agent/YOUR-AGENT-ID/stream
 IAEDU_CHANNEL_ID=your-channel-id
 IAEDU_API_KEY=your-api-key
 EOF
+
 llm -m iaedu "What is the capital of Portugal?"
 ```
 
