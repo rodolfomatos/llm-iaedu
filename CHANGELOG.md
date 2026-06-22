@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3 (2026-06-22)
+
+### Added
+- `llm-iaedu configure` CLI command — interactive setup without Makefile
+- `[project.scripts]` entry point: `llm-iaedu = "llm_iaedu:main"`
+- `python -m llm_iaedu configure` support for pipx-inject installs
+- Ubuntu/Debian PEP 668 installation guide in README
+
+### Fixed
+- `make check` / `make doctor` variable expansion bug (PID+var instead of value)
+- `make check` incorrectly referenced `IAEDU_AGENT_ID` instead of `IAEDU_ENDPOINT`
+- `ubuntu-setup` Makefile target tried `--user` which doesn't bypass PEP 668
+
 ## 0.2 (2026-06-20)
 
 ### Changed
