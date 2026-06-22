@@ -5,6 +5,7 @@ Plugin for [LLM](https://llm.datasette.io/) that enables using the
 
 ## Quick Start
 
+### Linux / macOS
 ```bash
 # Install
 pip install llm-iaedu
@@ -12,11 +13,25 @@ pip install llm-iaedu
 # Set API key
 llm keys set iaedu
 
-# Set as default model (optional)
-llm models default iaedu
-
 # Ask anything
-llm "What is the capital of Portugal?"
+llm -m iaedu "What is the capital of Portugal?"
+```
+
+### Ubuntu / Debian (PEP 668)
+Ubuntu 23.04+ blocks system-wide `pip install`. Use one of:
+
+**Option A — pip install --user** (simpler):
+```bash
+pip install --user llm-iaedu
+llm keys set iaedu
+llm -m iaedu "What is the capital of Portugal?"
+```
+
+**Option B — pipx** (if you already `pipx install llm`):
+```bash
+pipx inject llm llm-iaedu
+llm keys set iaedu
+llm -m iaedu "What is the capital of Portugal?"
 ```
 
 ## Setup
@@ -72,7 +87,14 @@ cat file.txt | llm -m iaedu
 ```bash
 git clone https://github.com/rodolfomatos/llm-iaedu.git
 cd llm-iaedu
+
+# Standard
 make setup
+# ... or Ubuntu/Debian:
+make ubuntu-setup
+# ... or pipx:
+make pipx-setup
+
 make check
 ```
 

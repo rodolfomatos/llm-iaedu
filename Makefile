@@ -1,5 +1,6 @@
 .PHONY: setup install dev-install test build clean help start \
-        check lint format doctor metrics pre-commit configure
+        check lint format doctor metrics pre-commit configure \
+        ubuntu-setup pipx-setup
 
 # Variables
 PIP ?= pip
@@ -11,33 +12,49 @@ help:
 	@echo "llm-iaedu — Makefile"
 	@echo ""
 	@echo "Setup:"
-	@echo "  make setup        Install dependencies (dev mode)"
-	@echo "  make configure    Interactive setup (paste from iaedu.pt)"
-	@echo "  make install      Install package in production mode"
-	@echo "  make dev-install  Install package in development mode"
+	@echo "  make setup          Install dependencies (dev mode)"
+	@echo "  make configure      Interactive setup (paste from iaedu.pt)"
+	@echo "  make install        Install package in production mode"
+	@echo "  make dev-install    Install package in development mode"
+	@echo ""
+	@echo "Ubuntu/Debian (PEP 668):"
+	@echo "  make ubuntu-setup   Install using --user (bypasses externally-managed)"
+	@echo "  make pipx-setup     Install into existing pipx llm venv"
 	@echo ""
 	@echo "Usage:"
-	@echo "  make start        Install + show usage instructions"
-	@echo "  make check        Verify plugin is installed and configured"
+	@echo "  make start          Install + show usage instructions"
+	@echo "  make check          Verify plugin is installed and configured"
 	@echo ""
 	@echo "Quality:"
-	@echo "  make lint         Run ruff linter"
-	@echo "  make format       Run ruff formatter"
-	@echo "  make pre-commit   Run lint + format-check + build"
-	@echo "  make test         Run tests (if any exist)"
-	@echo "  make build        Build distribution files"
+	@echo "  make lint           Run ruff linter"
+	@echo "  make format         Run ruff formatter"
+	@echo "  make pre-commit     Run lint + format-check + build"
+	@echo "  make test           Run tests (if any exist)"
+	@echo "  make build          Build distribution files"
 	@echo ""
 	@echo "Diagnostics:"
-	@echo "  make doctor       Check environment and config"
-	@echo "  make metrics      Show project metrics"
+	@echo "  make doctor         Check environment and config"
+	@echo "  make metrics        Show project metrics"
 	@echo ""
 	@echo "Housekeeping:"
-	@echo "  make clean        Clean build artifacts"
+	@echo "  make clean          Clean build artifacts"
 
 setup:
 	@echo "Setting up development environment..."
 	$(PIP) install -e .
 	$(PIP) install ruff
+
+# For Ubuntu/Debian where PEP 668 blocks system pip install
+ubuntu-setup:
+	@echo "Installing with --user (PEP 668 workaround)..."
+	pip install --user -e .
+	pip install --user ruff
+
+# For when llm is installed via pipx
+pipx-setup:
+	@echo "Injecting plugin into pipx llm venv..."
+	pipx inject llm .
+	pipx inject llm ruff
 
 configure:
 	@echo ""
@@ -65,17 +82,12 @@ check:
 	@echo "--- Installation ---"
 	$(LLM) plugins 2>/dev/null | grep -q iaedu \
 		&& echo "  [OK] Plugin registered in llm" \
-		|| echo "  [FAIL] Plugin not found"
+		|| echo "  [FAIL] Plugin not found (run: pip install llm-iaedu)"
 	@echo ""
 	@echo "--- Configuration ---"
-	@for var in IAEDU_API_KEY IAEDU_CHANNEL_ID IAEDU_AGENT_ID; do \
-		val=$$(eval echo \$$\$$var); \
-		if [ -n "$$val" ]; then \
-			echo "  [OK] $$$$var is set"; \
-		else \
-			echo "  [WARN] $$$$var is not set (env var or .env)"; \
-		fi; \
-	done
+	@if [ -n "$$IAEDU_API_KEY" ]; then echo "  [OK] IAEDU_API_KEY is set"; else echo "  [WARN] IAEDU_API_KEY is not set"; fi
+	@if [ -n "$$IAEDU_CHANNEL_ID" ]; then echo "  [OK] IAEDU_CHANNEL_ID is set"; else echo "  [WARN] IAEDU_CHANNEL_ID is not set"; fi
+	@if [ -n "$$IAEDU_ENDPOINT" ]; then echo "  [OK] IAEDU_ENDPOINT is set"; else echo "  [WARN] IAEDU_ENDPOINT is not set"; fi
 	@$(LLM) keys list 2>/dev/null | grep -q iaedu \
 		&& echo "  [OK] iaedu key is set in llm keys" \
 		|| echo "  [WARN] iaedu key not set (run: llm keys set iaedu)"
@@ -129,11 +141,10 @@ doctor:
 	@echo ""
 	@echo "=== Config Files ==="
 	@for f in ./.env ~/.config/iaedu/env ~/.iaedu.env; do \
-		exp=$$(eval echo $$f); \
-		if [ -f "$$exp" ]; then \
-			echo "  [OK] $$exp"; \
+		if [ -f "$$f" ]; then \
+			echo "  [OK] $$f"; \
 		else \
-			echo "  [--] $$exp (not found)"; \
+			echo "  [--] $$f (not found)"; \
 		fi; \
 	done
 	@echo ""

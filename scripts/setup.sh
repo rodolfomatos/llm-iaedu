@@ -50,7 +50,26 @@ echo "  [OK] Config written to $CONFIG_FILE"
 # --- Install package ---
 echo ""
 echo "Installing llm-iaedu..."
-pip install llm-iaedu 2>/dev/null || pip install . 2>/dev/null || true
+
+if command -v pipx &>/dev/null && pipx list 2>/dev/null | grep -q "^package.*llm"; then
+    # llm is installed via pipx — inject plugin into its venv
+    pipx inject llm .
+    echo "  [OK] Plugin injected into pipx llm venv"
+elif pip install --user -e . 2>/dev/null; then
+    echo "  [OK] Plugin installed in user site-packages"
+elif pip install -e . 2>/dev/null; then
+    echo "  [OK] Plugin installed"
+else
+    echo "  [WARN] Could not auto-install. Run manually:"
+    echo ""
+    echo "    # Standard:"
+    echo "    pip install llm-iaedu"
+    echo ""
+    echo "    # Ubuntu (PEP 668):"
+    echo "    pip install --user llm-iaedu"
+    echo "    # or: pipx inject llm llm-iaedu"
+    echo ""
+fi
 
 echo ""
 echo "============================================"
@@ -59,5 +78,4 @@ echo "============================================"
 echo ""
 echo "  llm -m iaedu \"What is the capital of Portugal?\""
 echo "  llm models default iaedu"
-echo "  llm \"What is the capital of Portugal?\""
 echo ""
