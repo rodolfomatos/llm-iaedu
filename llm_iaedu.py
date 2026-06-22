@@ -6,7 +6,7 @@ import uuid
 import httpx
 
 import llm
-from llm import hookimpl, NeedsKeyException
+from llm import hookimpl
 
 
 def _load_dotenv():
@@ -51,15 +51,15 @@ class IaeduModel(llm.Model):
 
     def execute(self, prompt, stream, response, conversation):
         _load_dotenv()
-        api_key = llm.get_key("iaedu") or os.environ.get("IAEDU_API_KEY")
+        api_key = os.environ.get("IAEDU_API_KEY") or llm.get_key("iaedu")
         channel_id = os.environ.get("IAEDU_CHANNEL_ID")
         endpoint = os.environ.get("IAEDU_ENDPOINT")
         agent_id = os.environ.get("IAEDU_AGENT_ID")
 
         if not api_key:
-            raise NeedsKeyException(
-                "IAEDU API key not set. Use 'llm keys set iaedu' or "
-                "set IAEDU_API_KEY in .env"
+            raise RuntimeError(
+                "IAEDU API key not set. Run 'llm iaedu-configure' to set up "
+                "credentials, or set IAEDU_API_KEY in .env"
             )
 
         if not channel_id:
@@ -172,7 +172,7 @@ class IaeduModel(llm.Model):
             status = e.response.status_code
             if status == 401:
                 raise RuntimeError(
-                    "Authentication failed (401). Re-set your API key: llm keys set iaedu"
+                    "Authentication failed (401). Re-run 'llm iaedu-configure' with a fresh API key from iaedu.pt"
                 ) from e
             if status == 404:
                 raise RuntimeError(
@@ -223,14 +223,19 @@ def configure():
     print(f"  [OK] Config written to {config_file}")
     print()
     print("  You can now use: llm -m iaedu \"Your question\"")
+    print()
+    print("  Optional — make iaedu your default model:")
+    print("    llm models default iaedu")
+    print("  Then just: llm \"Your question\"")
 
 
 def main():
     if len(sys.argv) > 1 and sys.argv[1] == "configure":
         configure()
     elif len(sys.argv) > 1 and sys.argv[1] == "start":
-        print("Run: llm -m iaedu \"Your question\"")
-        print("Or:  llm iaedu-configure")
+        print("Usage: llm -m iaedu \"Your question\"")
+        print("  or:  llm iaedu-configure")
+        print("  or:  llm models default iaedu")
     else:
         print("Usage: llm-iaedu configure")
         sys.exit(1)

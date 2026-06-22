@@ -15,6 +15,10 @@ llm-iaedu configure
 
 # Ask anything
 llm -m iaedu "What is the capital of Portugal?"
+
+# Optional — make iaedu the default model:
+llm models default iaedu
+llm "What is the capital of Portugal?"
 ```
 
 ### Ubuntu / Debian (PEP 668)
@@ -22,21 +26,20 @@ Ubuntu 23.04+ blocks system-wide `pip install`. Use one of:
 
 **Option 1: pipx** (if you already `pipx install llm`):
 ```bash
+# Install plugin into llm's venv
 pipx inject llm llm-iaedu
 
-# Configure credentials (works after pipx inject, no extra install):
+# One-time setup — paste 3 values from iaedu.pt:
 llm iaedu-configure
-# OR from the git repo:
-make configure
-# OR manually:
-mkdir -p ~/.config/iaedu
-cat > ~/.config/iaedu/env << EOF
-IAEDU_ENDPOINT=https://api.iaedu.pt/agent-chat/api/v1/agent/YOUR-AGENT-ID/stream
-IAEDU_CHANNEL_ID=your-channel-id
-IAEDU_API_KEY=your-api-key
-EOF
 
+# That's it — no need for `llm keys set iaedu`
 llm -m iaedu "What is the capital of Portugal?"
+```
+
+To upgrade after install:
+```bash
+pipx runpip llm install --upgrade llm-iaedu
+source ~/.config/iaedu/env && llm -m iaedu "What is the capital of Portugal?"
 ```
 
 **Option 2: Virtual environment:**
@@ -59,7 +62,7 @@ make check          # verify everything works
 
 ## Setup
 
-### Quick (interactive)
+### Quick (interactive) — one step
 
 ```bash
 # From git clone (has Makefile):
@@ -67,11 +70,14 @@ make configure
 
 # From pip install (no repo):
 llm-iaedu configure
+
+# From pipx inject (llm subcommand):
+llm iaedu-configure
 ```
 
 Paste the three values from iaedu.pt (Endpoint URL, API Key, Channel ID)
 when prompted. The script creates `~/.config/iaedu/env` with everything
-needed — works from any directory.
+needed — no `llm keys set iaedu` required, works from any directory.
 
 ### Manual
 

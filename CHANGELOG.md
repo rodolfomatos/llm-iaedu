@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5 (2026-06-22)
+
+### Changed
+- Key precedence: env var (from `_load_dotenv`) takes priority over `llm keys` — `llm-iaedu configure` is now the single required config step
+- Error messages now point to `llm iaedu-configure` instead of `llm keys set iaedu`
+
+### Added
+- `configure()` output now includes `llm models default iaedu` tip for single-command usage
+
 ## 0.4 (2026-06-22)
 
 ### Added

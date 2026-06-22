@@ -1,6 +1,6 @@
 [project]
 name = "llm-iaedu"
-version = "0.4"
+version = "0.5"
 description = "LLM plugin for iaedu.pt API — no adapter required"
 readme = "README.md"
 authors = [{name = "Rodolfo Matos", email = "rodolfo.matos@gmail.com"}]
